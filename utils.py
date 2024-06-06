@@ -48,5 +48,5 @@ def set_num_threads(num_threads):
 
 def generate_prompt(query, mitre_entries):
     """Combine the query and the top results to generate a prompt."""
-    return (f"[CONTEXT] Here are some related MITRE entries:\n{mitre_entries}\n"
-            f"[QUESTION] {query}\n[ANSWER]")
+    return (f"[CONTEXT] Here are some related MITRE entries: {mitre_entries}"
+            f"[QUESTION] {query} [ANSWER]")

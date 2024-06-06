@@ -1,5 +1,5 @@
 # Description: Chatbot pipeline using SentenceTransformers and FAISS for real-time query handling.
-from sentence_transformers import SentenceTransformer, util
+from sentence_transformers import SentenceTransformer
 import faiss
 
 from summarizer import summarize
@@ -40,7 +40,7 @@ def handle_user_query(query, logger=logging.getLogger()):
     logger.info(f"Query embedding shape: {query_embedding.shape}")
 
     # Search in vector database
-    D, I = index.search(x=query_embedding.cpu().numpy(), k=3)
+    D, I = index.search(x=query_embedding.cpu().numpy(), k=2)
     logger.info(f"Search results: {I}")
     logger.info(f"Distances: {D}")
 
@@ -65,5 +65,5 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     user_prompt = "Qu'est-ce qu'une attaque Drive-by Compromise ?"
     response = handle_user_query(user_prompt)
-    print(f"Response:\n{response}")
+    print(response)
     print(f"Execution time: {time.time() - start:.2f} seconds")

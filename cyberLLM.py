@@ -13,7 +13,7 @@ def chat(model_id: str, cache_dir: str, input_text: str) -> str:
 
     try:
         input_ids = tokenizer.encode(input_text, return_tensors='pt').to(device)
-        output = model.generate(input_ids, max_length=len(input_text)+500, pad_token_id=tokenizer.eos_token_id)
+        output = model.generate(input_ids, max_new_tokens=1000, pad_token_id=tokenizer.eos_token_id)
 
         return tokenizer.decode(output[0], skip_special_tokens=True)
     except Exception as e:
