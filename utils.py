@@ -31,7 +31,7 @@ def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
         # device_map = {0: 'cuda', 1: 'cpu'}
         try:
             model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token,
-                                                         device_map='cuda', torch_dtype=torch.float16)
+                                                         device_map='auto', torch_dtype=torch.float16)
             device = 'cuda'
         except Exception as e:
             print(f"Error loading model on GPU: {e}")

@@ -18,8 +18,10 @@ def main():
 
     logging.basicConfig(level=logging.ERROR)
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')
+    import os
+    os.environ['TRANSFORMERS_CACHE'] = cache_dir
     print(f"using {device}")
-    pipe = pipeline('translation', model=model_id, tokenizer=model_id, device=device, cache_dir=cache_dir)
+    pipe = pipeline('translation', model=model_id, tokenizer=model_id, device=device)
 
     try:
         # Translate the input text
