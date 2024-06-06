@@ -8,13 +8,13 @@ import time
 
 def main():
     # User Message
-    input_text = "Bonjour Caroline, comment vas-tu?"
+    input_text = "Qu'est-ce qu'une attaque Drive-by Compromise ? Répondez de façon concrète et concise."
     # Get the language of the input text
     lang = detect(input_text)
     print(f"Detected language: {lang}")
     # Define variables
     model_id = 'Helsinki-NLP/opus-mt-fr-en' if lang == 'fr' else 'Helsinki-NLP/opus-mt-en-fr'
-    cache_dir = './models/'
+    cache_dir = "./models"
 
     logging.basicConfig(level=logging.ERROR)
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

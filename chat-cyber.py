@@ -5,13 +5,10 @@ from utils import load_tokenizer, load_model_on_available_device
 
 
 def main():
-    # Define variables
-    # model_id = 'segolilylabs/Lily-Cybersecurity-7B-v0.2'
     # model_id = 'mistralai/Mistral-7B-Instruct-v0.3'
     model_id = 'google/gemma-2b-it'
-
-    cache_dir = 'E:/models/'
-    input_text = "What is a Drive-by Compromise attack? Answer matter-of-factly and concisely."
+    cache_dir = './models/'
+    input_text = "What is a Drive-by Compromise attack? Respond concretely and concisely."
 
     logging.basicConfig(level=logging.ERROR)
 
