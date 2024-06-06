@@ -1,35 +1,7 @@
-import torch
-from transformers import AutoTokenizer, AutoModelForCausalLM
 import logging
 import time
 
-from utils import load_tokenizer
-
-
-def set_num_threads(num_threads):
-    torch.set_num_threads(num_threads)
-    torch.set_num_interop_threads(num_threads)
-
-
-def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
-    # Set the number of threads
-    set_num_threads(num_threads)
-    # Check if GPU is available
-    if torch.cuda.is_available():
-        print("GPU is available.")
-        try:
-            model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token,
-                                                         device_map='auto', torch_dtype=torch.float16)
-            device = 'cuda'
-        except Exception as e:
-            print(f"Error loading model on GPU: {e}")
-            model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token, device_map='cpu')
-            device = 'cpu'
-    else:
-        print("GPU is not available. Using CPU.")
-        model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token, device_map='cpu')
-        device = 'cpu'
-    return model, device
+from utils import load_tokenizer, load_model_on_available_device
 
 
 def main():
