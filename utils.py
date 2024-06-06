@@ -11,9 +11,7 @@ def load_tokenizer(model_dir, cache_dir):
         return
 
     try:
-        print("Loading tokenizer...")
         tokenizer = AutoTokenizer.from_pretrained(model_dir, cache_dir=cache_dir, token=token)
-        print("Tokenizer loaded successfully.")
     except Exception as e:
         print(f"Error loading tokenizer: {e}")
         return
@@ -27,7 +25,6 @@ def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
 
     # Check if GPU is available
     if torch.cuda.is_available():
-        print("GPU is available.")
         # device_map = {0: 'cuda', 1: 'cpu'}
         try:
             model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token,
@@ -47,3 +44,9 @@ def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
 def set_num_threads(num_threads):
     torch.set_num_threads(num_threads)
     torch.set_num_interop_threads(num_threads)
+
+
+def generate_prompt(query, mitre_entries):
+    """Combine the query and the top results to generate a prompt."""
+    return (f"[CONTEXT] Here are some related MITRE entries:\n{mitre_entries}\n"
+            f"[QUESTION] {query}\n[ANSWER]")
