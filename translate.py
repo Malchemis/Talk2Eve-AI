@@ -14,7 +14,7 @@ def main():
     print(f"Detected language: {lang}")
     # Define variables
     model_id = 'Helsinki-NLP/opus-mt-fr-en' if lang == 'fr' else 'Helsinki-NLP/opus-mt-en-fr'
-    cache_dir = 'E:/models/'
+    cache_dir = './models/'
 
     logging.basicConfig(level=logging.ERROR)
     device = torch.device('cuda:0' if torch.cuda.is_available() else 'cpu')

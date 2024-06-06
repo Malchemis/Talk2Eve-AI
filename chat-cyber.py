@@ -8,7 +8,7 @@ def main():
     # Define variables
     # model_id = 'segolilylabs/Lily-Cybersecurity-7B-v0.2'
     model_id = 'mistralai/Mistral-7B-Instruct-v0.3'
-    cache_dir = 'E:/models/'
+    cache_dir = './models/'
     input_text = "What is a Drive-by Compromise attack? Answer matter-of-factly and concisely."
 
     logging.basicConfig(level=logging.ERROR)
