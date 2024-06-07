@@ -5,7 +5,6 @@ import faiss
 from summarizer import summarize
 from translate import translate
 from cyberLLM import chat
-from utils import generate_prompt
 
 import os
 import logging
@@ -13,15 +12,17 @@ import time
 
 # Load pre-trained model
 cache_dir = '/media/malchemis/CYBERTRON/models'
+data_dir = '/media/malchemis/CYBERTRON/data'
 sentenceTransformerModel = SentenceTransformer('paraphrase-MiniLM-L6-v2', cache_folder=cache_dir)
 
 # Pre-compute embeddings for MITRE techniques and tactics
 
 mitre_entries, mitre_titles = [], []
-for entry in os.listdir('data/MITRE'):
-    with open(f'data/MITRE/{entry}', 'r') as f:
-        mitre_entries.append(f.read())
-        mitre_titles.append(entry.split('.')[0])
+for entry in os.listdir(f'{data_dir}/MITRE'):
+    if entry.endswith('.txt'):
+        with open(f'{data_dir}/MITRE/{entry}', 'r') as f:
+            mitre_entries.append(f.read())
+            mitre_titles.append(entry.split('.')[0])
 mitre_embeddings = sentenceTransformerModel.encode(mitre_entries, convert_to_tensor=True)
 
 # Index embeddings using FAISS
@@ -50,12 +51,12 @@ def handle_user_query(query, logger=logging.getLogger()):
     logger.info(f"Top results: {top_results}")
 
     # Generate a precise answer using the chatbot
-    answer = " ".join(top_results)  # Combine top results
-    answer = chat(model_id='google/gemma-2b-it', cache_dir=cache_dir, input_text=generate_prompt(query, answer))
+    context = " ".join(top_results)  # Combine top results
+    answer = chat(model_id='google/gemma-2b-it', cache_dir=cache_dir, input_text=query, add_entries=context)
     logger.info(f"Generated answer: {answer}")
 
     # Translate answer if needed
-    answer = answer.split('[ANSWER]')[1].strip()
+    answer = answer.split('Answer:')[2].strip().replace('\n', ' ')
     translated = translate(answer, model_id='Helsinki-NLP/opus-mt-en-fr', cache_dir=cache_dir, output_lang='fr')
     return translated
 
@@ -63,7 +64,10 @@ def handle_user_query(query, logger=logging.getLogger()):
 if __name__ == '__main__':
     start = time.time()
     logging.basicConfig(level=logging.INFO)
-    user_prompt = "Qu'est-ce qu'une attaque Drive-by Compromise ?"
+    user_prompt = "Qu'est-ce qu'une attaque Drive-by Compromise ?"  # In-context user French
+    # user_prompt = "What is a Drive-by Compromise attack?"  # In-context user English
+    # user_prompt = "Comment cuisiner une pizza ?"  # Out-of-context user French
+    # user_prompt = "How to cook a pizza?" # Out-of-context user English
     response = handle_user_query(user_prompt)
     print(response)
     print(f"Execution time: {time.time() - start:.2f} seconds")

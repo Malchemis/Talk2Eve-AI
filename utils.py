@@ -28,7 +28,8 @@ def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
         # device_map = {0: 'cuda', 1: 'cpu'}
         try:
             model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token,
-                                                         device_map='auto', torch_dtype=torch.float16)
+                                                         device_map='auto', torch_dtype=torch.float16, )
+            # attn_implementation="flash_attention_2")
             device = 'cuda'
         except Exception as e:
             print(f"Error loading model on GPU: {e}")
@@ -44,9 +45,3 @@ def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
 def set_num_threads(num_threads):
     torch.set_num_threads(num_threads)
     torch.set_num_interop_threads(num_threads)
-
-
-def generate_prompt(query, mitre_entries):
-    """Combine the query and the top results to generate a prompt."""
-    return (f"[CONTEXT] Here are some related MITRE entries: {mitre_entries}"
-            f"[QUESTION] {query} [ANSWER]")
