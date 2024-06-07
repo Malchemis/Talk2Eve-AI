@@ -15,7 +15,7 @@ def chat(model_id: str, cache_dir: str, input_text: str, add_entries: str) -> st
     try:
         prompt = get_chat_template(input_text, add_entries)
         inputs = tokenizer.encode(prompt, add_special_tokens=False, return_tensors="pt")
-        outputs = model.generate(input_ids=inputs.to(model.device), max_new_tokens=512)
+        outputs = model.generate(input_ids=inputs.to(model.device), max_new_tokens=1024)
 
         return tokenizer.decode(outputs[0], skip_special_tokens=True)
     except Exception as e:

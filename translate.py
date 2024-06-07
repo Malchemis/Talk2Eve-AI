@@ -22,11 +22,10 @@ def translate(
 
     pipe = pipeline('translation', model=model_id, tokenizer=model_id, device=device)
     try:
-        output = pipe(input_text)
-        return output[0]['translation_text']
+        return pipe(input_text)[0]['translation_text']
     except Exception as e:
         print(f"Error during translation: {e}")
 
 
 if __name__ == '__main__':
-    translate()
+    translate(model_id='Helsinki-NLP/opus-mt-en-fr', output_lang='fr')
