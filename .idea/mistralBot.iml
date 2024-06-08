@@ -4,8 +4,7 @@
     <content url="file://$MODULE_DIR$">
       <excludeFolder url="file://$MODULE_DIR$/archive" />
     </content>
-    <content url="file:///media/malchemis/CYBERTRON/data" />
-    <content url="file:///media/malchemis/CYBERTRON/models" />
+    <content url="file:///media/basic/CYBERTRON" />
     <orderEntry type="jdk" jdkName="chatAi" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>

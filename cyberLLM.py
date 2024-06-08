@@ -59,7 +59,7 @@ def get_chat_template(prompt: str, add_entries):
 if __name__ == '__main__':
     # model_name = 'mistralai/Mistral-7B-Instruct-v0.3'
     model_name = 'google/gemma-2b-it'
-    cache_folder = '/media/malchemis/CYBERTRON/models'
+    cache_folder = '/media/basic/CYBERTRON/models'
     user_prompt = "What is a Drive-by Compromise attack?" # In-context user
     # user_prompt = "How to cook a pizza?"  # Out-of-context user
     with open('data/MITRE/Drive-by-Compromise.txt', 'r') as f:

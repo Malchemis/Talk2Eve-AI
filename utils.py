@@ -4,7 +4,7 @@ import torch
 
 def load_tokenizer(model_dir, cache_dir):
     try:
-        with open('hub-token', 'r') as file:
+        with open('/media/basic/CYBERTRON/hub-token', 'r') as file:
             token = file.read().strip()
     except FileNotFoundError:
         print("Error: 'hub-token' file not found.")
