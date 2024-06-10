@@ -74,8 +74,7 @@ def read_file(file_path):
 
 def get_model(model_name='sentence-transformers/all-MiniLM-L6-v2',
               tokenize_name='sentence-transformers/all-MiniLM-L6-v2',
-              output_path='E'
-                          ':/models/'):
+              output_path='E:/models/'):
     tokenizer = AutoTokenizer.from_pretrained(tokenize_name)
     model = AutoModel.from_pretrained(model_name, cache_dir=output_path)
     return tokenizer, model

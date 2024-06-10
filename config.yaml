@@ -1,0 +1,8 @@
+chat_handler:
+  cache_dir: '/media/basic/CYBERTRON/models'
+  data_dir: '/media/basic/CYBERTRON/data'
+  chat_template_path: '/media/basic/CYBERTRON/data/chat_template.txt'
+  hub_token: '/media/basic/CYBERTRON/hub-token'
+
+torch:
+  num_workers: 8
