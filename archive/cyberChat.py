@@ -11,8 +11,8 @@ import time
 import pandas as pd
 
 # Load pre-trained model
-cache_dir = '/media/basic/CYBERTRON/models'
-data_dir = '/media/basic/CYBERTRON/data'
+cache_dir = '/models'
+data_dir = '/data'
 sentenceTransformerModel = SentenceTransformer('sentence-transformers/all-MiniLM-L6-v2', cache_folder=cache_dir)
 
 # Load MITRE data

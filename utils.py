@@ -1,51 +1,26 @@
-from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+from transformers import TextStreamer, AutoTokenizer
+
 import gc
 
 
-def load_tokenizer(model_dir, cache_dir):
-    try:
-        with open('/media/basic/CYBERTRON/hub-token', 'r') as file:
-            token = file.read().strip()
-    except FileNotFoundError:
-        print("Error: 'hub-token' file not found.")
-        return
+class MyTextStreamer(TextStreamer):
+    def __init__(self, tokenizer: 'AutoTokenizer', skip_prompt: bool = False, **decode_kwargs):
+        super().__init__(tokenizer, skip_prompt=skip_prompt, **decode_kwargs)
 
-    try:
-        tokenizer = AutoTokenizer.from_pretrained(model_dir, cache_dir=cache_dir, token=token)
-    except Exception as e:
-        print(f"Error loading tokenizer: {e}")
-        return
-
-    return token, tokenizer
-
-
-def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
-    # Set the number of threads
-    set_num_threads(num_threads)
-
-    # Check if GPU is available
-    if torch.cuda.is_available():
-        # device_map = {0: 'cuda', 1: 'cpu'}
-        try:
-            model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token,
-                                                         device_map='auto', torch_dtype=torch.float16, )
-            # attn_implementation="flash_attention_2")
-            device = 'cuda'
-        except Exception as e:
-            print(f"Error loading model on GPU: {e}")
-            model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token, device_map='cpu')
-            device = 'cpu'
-    else:
-        print("GPU is not available. Using CPU.")
-        model = AutoModelForCausalLM.from_pretrained(model_id, cache_dir=cache_dir, token=token, device_map='cpu')
-        device = 'cpu'
-    return model, device
+    # TODO: FOR B3LIOTT. Change the print statement, send text to the queue
+    def on_finalized_text(self, text: str, stream_end: bool = False):
+        """Prints the new text to stdout. If the stream is ending, also prints a newline."""
+        if '</s>' in text:
+            text = text[:text.index('</s>')]
+        print(text, flush=True, end="" if not stream_end else None)
 
 
 def set_num_threads(num_threads):
+    # Empty cache, get memory back
     torch.cuda.empty_cache()
     gc.collect()
+    # Set num workers
     torch.set_num_threads(num_threads)
     torch.set_num_interop_threads(num_threads)
 
