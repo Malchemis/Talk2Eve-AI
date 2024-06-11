@@ -1,5 +1,6 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
+import gc
 
 
 def load_tokenizer(model_dir, cache_dir):
@@ -43,5 +44,12 @@ def load_model_on_available_device(model_id, cache_dir, token, num_threads=8):
 
 
 def set_num_threads(num_threads):
+    torch.cuda.empty_cache()
+    gc.collect()
     torch.set_num_threads(num_threads)
     torch.set_num_interop_threads(num_threads)
+
+
+def print_chat(chat):
+    for exchange in chat:
+        print(f"{exchange['role']}: {exchange['content']}")

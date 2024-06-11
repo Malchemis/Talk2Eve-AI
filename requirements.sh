@@ -8,3 +8,6 @@ pip install sentencepiece
 pip install sacremoses
 pip install langdetect
 pip install accelerate
+git clone https://github.com/bofenghuang/vigogne.git
+cd vigogne
+pip install .
