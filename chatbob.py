@@ -10,7 +10,7 @@ import pandas as pd
 import logging
 import os
 
-from utils import MyTextStreamer
+from utils import MyTextStreamer, handle_chat_history
 
 lang_code_to_name = {
     'en': 'English',
@@ -82,9 +82,8 @@ class ChatHandler:
     # Step 3: Generate chat response
     def generate_chat_response(self, chat_history, context, top_p=0.9, top_k=50,
                                repetition_penalty=1.0, max_new_tokens=512, **kwargs):
-        chat_history[-1]['content'] += f"\nContext: {context}\nAlways answer in French. Répond toujours en français."
-        input_ids = self.chat_tokenizer.apply_chat_template(chat_history, add_generation_prompt=True,
-                                                            return_tensors="pt").to(self.chat_model.device)
+        input_text = self.get_chat_template(chat_history[-1]['content'], context, chat_history[:-1])
+        input_ids = self.chat_tokenizer(input_text, return_tensors="pt").input_ids.to(self.device)
         input_length = input_ids.shape[1]
 
         generated_outputs = self.chat_model.generate(
@@ -109,6 +108,17 @@ class ChatHandler:
         chat_history.append({"role": "assistant", "content": generated_text})
         return generated_text, chat_history
 
+    def get_chat_template(self, user_prompt, context, history):
+        with open(self.chat_template_path, 'r') as f:
+            default_system_prompt = f.read()
+        return (f"{default_system_prompt}\n\n"
+                f"user : \n"
+                f"- Historique de conversation : \n{handle_chat_history(history)}\n"
+                f"- Contexte : {context}\n"
+                f"- Question : {user_prompt}\n"
+                f"assistant : \n"
+                )
+
     def chat(self, chat_history):
         self.logger.debug(f"Chat history:\n{chat_history}")
         # Step 1: Translate query to English if necessary
@@ -124,7 +134,7 @@ class ChatHandler:
         self.logger.debug(f"Search results: {search_results}")
 
         # Step 4: Generate chat response
-        context = " ".join(search_results) if search_results else "No relevant information found. Answer using your knowledge and the chat history."
+        context = " ".join(search_results) if search_results else ""
         generated_text, chat_history = self.generate_chat_response(chat_history, context)
         self.logger.debug(f"Generated response: {generated_text}")
         return chat_history

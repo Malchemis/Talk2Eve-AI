@@ -28,3 +28,7 @@ def set_num_threads(num_threads):
 def print_chat(chat):
     for exchange in chat:
         print(f"{exchange['role']}: {exchange['content']}")
+
+
+def handle_chat_history(chat_history):
+    return "\n".join([f"{msg['role']} : {msg['content']}" for msg in chat_history])

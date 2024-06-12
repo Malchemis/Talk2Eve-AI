@@ -11,3 +11,5 @@ pip install accelerate
 git clone https://github.com/bofenghuang/vigogne.git
 cd vigogne
 pip install .
+pip install pika
+pip install pymongo

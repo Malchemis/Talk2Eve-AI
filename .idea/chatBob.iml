@@ -8,4 +8,11 @@
     <orderEntry type="jdk" jdkName="chatAi" jdkType="Python SDK" />
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
+  <component name="PyNamespacePackagesService">
+    <option name="namespacePackageFolders">
+      <list>
+        <option value="$MODULE_DIR$/ai_package_for_com" />
+      </list>
+    </option>
+  </component>
 </module>
