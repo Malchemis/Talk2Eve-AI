@@ -84,15 +84,16 @@ class ChatHandler:
         with open(self.chat_template_path, 'r') as f:
             default_system_prompt = f.read()
         return (f"{default_system_prompt}\n\n"
-                f"user : \n"
+                f"system : \n"
                 f"- Historique de conversation : \n{handle_chat_history(history)}\n"
-                f"- Contexte : {context}\n"
-                f"- Question : {user_prompt}\n"
+                f"- Contexte de MITRE: {context}\n\n"
+                f"user : \n"
+                f"- Question : {user_prompt}\n\n"
                 f"assistant : \n"
                 )
 
     def generate_chat_response(self, chat_history, context, top_p=0.9, top_k=50,
-                               repetition_penalty=1.0, max_new_tokens=512, **kwargs):
+                               repetition_penalty=1.0, max_new_tokens=384, **kwargs):
         input_text = self.get_chat_template(chat_history[-1]['content'], context, chat_history[:-1])
         input_ids = self.chat_tokenizer(input_text, return_tensors="pt").input_ids.to(self.device)
         input_length = input_ids.shape[1]
