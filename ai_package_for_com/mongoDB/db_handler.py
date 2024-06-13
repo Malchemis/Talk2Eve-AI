@@ -1,6 +1,6 @@
 import pymongo
 from ai_package_for_com.mongoDB.constants import MONGO_URI, MONGO_DB, MONGO_COLLECTION
-
+from ai_package_for_com.exceptions import UpdateContextException
 
 class DBHandler:
     def __init__(self):
@@ -17,7 +17,10 @@ class DBHandler:
     
     def update(self, filter, field, data):
         query = {'$set': {field: data}}
-        self.collection.update_one(filter, query)
+        try:
+            self.collection.update_one(filter, query, upsert=True)
+        except Exception as e:
+            raise UpdateContextException(e)
 
     def createIndex(self, indexName):
         self.collection.create_index([(indexName, 1)], unique=True)

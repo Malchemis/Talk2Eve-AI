@@ -106,8 +106,8 @@ class RabbitMQHandler:
 
             self.channel.queue_declare(queue=QUEUE_OUTPUT, durable=False, passive=True)
             self.channel.basic_publish(exchange='',
-                                  routing_key=QUEUE_OUTPUT,
-                                  body=body_bytes)
+                                       routing_key=QUEUE_OUTPUT,
+                                       body=body_bytes)
             print(" [>] Message sent: ", body)
         except Exception as e:
             print('Erreur lors de l\'envoi du message: ', str(e))

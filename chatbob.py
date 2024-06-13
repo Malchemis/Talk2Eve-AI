@@ -7,7 +7,6 @@ from langdetect import detect
 import faiss
 import pandas as pd
 
-import logging
 import os
 
 from utils import MyTextStreamer, handle_chat_history
@@ -19,13 +18,12 @@ lang_code_to_name = {
 
 
 class ChatHandler:
-    def __init__(self, cache_dir, data_dir, chat_template_path, hub_token):
-        logging.basicConfig(level=logging.INFO)
+    def __init__(self, cache_dir, data_dir, chat_template_path, hub_token, queue, logger):
         self.cache_dir = cache_dir
         self.data_dir = data_dir
         self.chat_template_path = chat_template_path
         self.hub_token = hub_token
-        self.logger = logging.getLogger('ChatHandler')
+        self.logger = logger
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         self.logger.debug(f"Using device: {self.device}")
         os.environ['TRANSFORMERS_CACHE'] = self.cache_dir
@@ -51,7 +49,7 @@ class ChatHandler:
                                                                torch_dtype=torch.float16, device_map="auto",
                                                                cache_dir=self.cache_dir, token=self.hub_token,
                                                                quantization_config=bnb_config)
-        self.chat_streamer = MyTextStreamer(self.chat_tokenizer, skip_prompt=True)
+        self.chat_streamer = MyTextStreamer(self.chat_tokenizer, queue, skip_prompt=True, logger=self.logger)
 
     def translate_text(self, text, target_lang='en'):
         detected_lang = detect(text)
@@ -75,11 +73,24 @@ class ChatHandler:
         for i in range(k):
             if distances[0][i] > 1.5:
                 break
-            result = '\n' + self.mitre_data.iloc[indices[0][i]]["name"] + ': ' + self.mitre_data.iloc[indices[0][i]]["text"]
+            result = ('\n' +
+                      self.mitre_data.iloc[indices[0][i]]["name"] + ': ' +
+                      self.mitre_data.iloc[indices[0][i]]["text"])
             results.append(result)
         return results
 
     # Step 3: Generate chat response
+    def get_chat_template(self, user_prompt, context, history):
+        with open(self.chat_template_path, 'r') as f:
+            default_system_prompt = f.read()
+        return (f"{default_system_prompt}\n\n"
+                f"user : \n"
+                f"- Historique de conversation : \n{handle_chat_history(history)}\n"
+                f"- Contexte : {context}\n"
+                f"- Question : {user_prompt}\n"
+                f"assistant : \n"
+                )
+
     def generate_chat_response(self, chat_history, context, top_p=0.9, top_k=50,
                                repetition_penalty=1.0, max_new_tokens=512, **kwargs):
         input_text = self.get_chat_template(chat_history[-1]['content'], context, chat_history[:-1])
@@ -98,7 +109,7 @@ class ChatHandler:
                 eos_token_id=self.chat_tokenizer.eos_token_id,
                 **kwargs,
             ),
-            # streamer=self.chat_streamer,
+            streamer=self.chat_streamer,
             return_dict_in_generate=True,
         )
 
@@ -108,18 +119,9 @@ class ChatHandler:
         chat_history.append({"role": "assistant", "content": generated_text})
         return generated_text, chat_history
 
-    def get_chat_template(self, user_prompt, context, history):
-        with open(self.chat_template_path, 'r') as f:
-            default_system_prompt = f.read()
-        return (f"{default_system_prompt}\n\n"
-                f"user : \n"
-                f"- Historique de conversation : \n{handle_chat_history(history)}\n"
-                f"- Contexte : {context}\n"
-                f"- Question : {user_prompt}\n"
-                f"assistant : \n"
-                )
-
-    def chat(self, chat_history):
+    def chat(self, chat_history, last_socket_id):
+        self.chat_streamer.last_socket_id = last_socket_id
+        self.chat_streamer.first_word = True
         self.logger.debug(f"Chat history:\n{chat_history}")
         # Step 1: Translate query to English if necessary
         translated_query = self.translate_text(chat_history[-1]['content'], target_lang='en')

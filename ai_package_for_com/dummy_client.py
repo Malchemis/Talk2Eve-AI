@@ -32,8 +32,8 @@ def send_loop():
         try:
             data = {
                 "socket_id": "oui",
-                "id": 1,
-                "message": "Baguette fromage"
+                "id": 6,
+                "message": "Qu'est ce qu'une attaque DDOS ?"
             }
             body_bytes = json.dumps(data).encode('utf-8')
             channel.basic_publish(exchange='',

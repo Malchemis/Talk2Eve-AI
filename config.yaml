@@ -1,4 +1,4 @@
-max_conv_length: 4  # Nums of chat history to keep
+max_conv_length: 3  # Nums of chat history to keep
 refresh_delay: 2 # Delay in seconds to refresh the chat
 
 chat_handler:

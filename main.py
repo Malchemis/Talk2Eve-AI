@@ -15,8 +15,8 @@ import sys
 def main_loop(config, logger):
     set_num_threads(config['torch']['num_workers'])
     rabbitmq = RabbitMQHandler()
-    ia = ChatHandler(**config['chat_handler'])
     db = DBHandler()
+    ia = ChatHandler(queue=rabbitmq, logger=logger, **config['chat_handler'])
 
     th = config['max_conv_length']
     ref_delay = config['refresh_delay']
@@ -32,42 +32,39 @@ def main_loop(config, logger):
 
             logger.debug('IA en cours de traitement...')
             try:
-                context = db.findOne({'id': last_req['id']})['context']
+                chat_history = db.findOne({'id': last_req['id']})['context']
             except Exception as e:
                 logger.debug(e)
                 logger.debug('Erreur lors de la récupération du contexte')
-                context = []
+                chat_history = []
 
-            prompt = {
-                'role': 'user',
-                'content': last_req['message']
-            }
+            prompt = {'role': 'user', 'content': last_req['message']}
 
-            context.append(prompt)
-            if len(context) > th:
-                context = context[-th:]
+            chat_history.append(prompt)
+            if len(chat_history) > th:
+                chat_history = chat_history[-th:]
             try:
-                chat_history = ia.chat(context)
+                chat_history = ia.chat(chat_history, last_req['socket_id'])
                 db.update({'id': last_req['id']}, 'context', chat_history)
-                response = {"status": "success", "socket_id": last_req['socket_id'],
-                            "context": chat_history[-1]['content']}
+                logger.info(chat_history)
 
-            except:
+            except UpdateContextException as e:
+                logger.error(e)
+            except Exception as e:
+                logger.error(e)
                 response = {"status": "error", "socket_id": last_req['socket_id'],
-                            "context": "An error occurred, please try again"}
-
-            logger.debug('Envoi du résultat...')
-            rabbitmq.send_result(response)
+                            "error": "An error occurred, please try again"}
+                rabbitmq.send_result(response)
 
         except MessageReceptionError as e:
-            logger.debug(e)
+            logger.error(e)
         except Exception as e:
-            logger.debug(e)
-            logger.debug("Arret du serveur")
+            logger.error(e)
+            logger.error("Arret du serveur")
             rabbitmq.close()
             sys.exit(1)
         except KeyboardInterrupt:
-            logger.debug('Interruption clavier')
+            logger.error('Interruption clavier')
             rabbitmq.close()
             sys.exit(0)
 
@@ -76,5 +73,4 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     with open('config.yaml', 'r') as file:
         config_file = yaml.safe_load(file)
-    logger = logging.getLogger('Talk2Eve')
-    main_loop(config_file, logger)
+    main_loop(config_file, logger=logging.getLogger('Talk2Eve'))
