@@ -120,8 +120,9 @@ class ChatHandler:
         chat_history.append({"role": "assistant", "content": generated_text})
         return generated_text, chat_history
 
-    def chat(self, chat_history, last_socket_id):
+    def chat(self, chat_history, last_socket_id, access_token):
         self.chat_streamer.last_socket_id = last_socket_id
+        self.chat_streamer.access_token = access_token
         self.chat_streamer.first_word = True
         self.logger.debug(f"Chat history:\n{chat_history}")
         # Step 1: Translate query to English if necessary

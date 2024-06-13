@@ -44,7 +44,7 @@ def main_loop(config, logger):
             if len(chat_history) > th:
                 chat_history = chat_history[-th:]
             try:
-                chat_history = ia.chat(chat_history, last_req['socket_id'])
+                chat_history = ia.chat(chat_history, last_req['socket_id'], last_req['id'])
                 db.update({'id': last_req['id']}, 'context', chat_history)
                 logger.info(chat_history)
 
@@ -53,6 +53,7 @@ def main_loop(config, logger):
             except Exception as e:
                 logger.error(e)
                 response = {"status": "error", "socket_id": last_req['socket_id'],
+                            "acccess_token": last_req['id'],
                             "error": "An error occurred, please try again"}
                 rabbitmq.send_result(response)
 

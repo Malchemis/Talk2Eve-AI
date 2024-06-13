@@ -10,6 +10,7 @@ class MyTextStreamer(TextStreamer):
         self.first_word = True
         self.queue = queue
         self.last_socket_id = None
+        self.access_token = None
         self.logger = logger
 
     def on_finalized_text(self, text: str, stream_end: bool = False):
@@ -23,7 +24,7 @@ class MyTextStreamer(TextStreamer):
             self.first_word = False
         else:
             category = "word"
-        response = {"status": category, "socket_id": self.last_socket_id,
+        response = {"status": category, "socket_id": self.last_socket_id, 'access_token': self.access_token,
                     category: text}
         self.logger.debug(f"Sending {text} to the queue")
         self.queue.send_result(response)
