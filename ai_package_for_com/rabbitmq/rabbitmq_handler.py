@@ -4,7 +4,6 @@ from time import sleep
 from ai_package_for_com.exceptions import *
 
 
-# TODO: a mettre dans les var d'env
 QUEUE_INPUT = 'queue_input'
 QUEUE_OUTPUT = 'queue_output'
 CONNEXION_URI = 'localhost'
@@ -23,7 +22,7 @@ def get_rabbitmq_handle(connection_string, max_retries=3):
         return channel, connection
     
     except Exception as e:
-        print('Erreur lors de la connexion à RabbitMQ: ' , str(e))
+        print('Erreur lors de la connexion à RabbitMQ: ', str(e))
         if max_retries > 0:
             sleep(5)
             return get_rabbitmq_handle(connection_string, max_retries - 1)

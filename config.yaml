@@ -1,11 +1,13 @@
-max_conv_length: 3  # Nums of chat history to keep
-refresh_delay: 0.5 # Delay in seconds to refresh the chat
+max_conv_length: 4  # Max. nums of chat history to keep
+refresh_delay: 0.1  # Delay in seconds to refresh the chat
 
-chat_handler:
+chat_handler: # Path to the models and data
   cache_dir: '/media/basic/CYBERTRON/models'
   data_dir: '/media/basic/CYBERTRON/data'
-  chat_template_path: '/media/basic/CYBERTRON/data/chat_template.txt'
-  hub_token: '/media/basic/CYBERTRON/hub-token'
+  chat_template_path: '/media/basic/CYBERTRON/data/chat_template.txt' # Path to Meta Prompt template
+  hub_token: '/media/basic/CYBERTRON/hub-token'  # Token to connect to Hugging Face Hub
 
-torch:
-  num_workers: 8
+torch:  # PyTorch configurations
+  num_workers: 8  # For efficient data loading, set to a multiple of your number of logical cpu cores
+
+

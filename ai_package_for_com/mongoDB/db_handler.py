@@ -2,6 +2,7 @@ import pymongo
 from ai_package_for_com.mongoDB.constants import MONGO_URI, MONGO_DB, MONGO_COLLECTION
 from ai_package_for_com.exceptions import UpdateContextException
 
+
 class DBHandler:
     def __init__(self):
         try:

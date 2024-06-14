@@ -1,11 +1,16 @@
+import gc
 import torch
 from transformers import TextStreamer, AutoTokenizer
-
-import gc
+from ai_package_for_com.rabbitmq.rabbitmq_handler import RabbitMQHandler
 
 
 class MyTextStreamer(TextStreamer):
-    def __init__(self, tokenizer: 'AutoTokenizer', queue, skip_prompt: bool = False, logger=None, **decode_kwargs):
+    """
+    A TextStreamer that sends the generated text to a queue instead of printing it to stdout.
+    Allows for streaming text generation to a web client, an app, etc.
+    """
+    def __init__(self, tokenizer: 'AutoTokenizer', queue : 'RabbitMQHandler', skip_prompt: bool = False, logger=None,
+                 **decode_kwargs):
         super().__init__(tokenizer, skip_prompt=skip_prompt, **decode_kwargs)
         self.first_word = True
         self.queue = queue
@@ -32,6 +37,7 @@ class MyTextStreamer(TextStreamer):
 
 
 def set_num_threads(num_threads):
+    """Défines the number of threads for PyTorch and Faiss."""
     # Empty cache, get memory back
     torch.cuda.empty_cache()
     gc.collect()
@@ -41,9 +47,11 @@ def set_num_threads(num_threads):
 
 
 def print_chat(chat):
+    """Prints the chat to stdout."""
     for exchange in chat:
         print(f"{exchange['role']}: {exchange['content']}")
 
 
 def handle_chat_history(chat_history):
+    """Format the chat history for prompting."""
     return "\n".join([f"{msg['role']} : {msg['content']}" for msg in chat_history])
