@@ -74,4 +74,4 @@ if __name__ == '__main__':
     logging.basicConfig(level=logging.INFO)
     with open('config.yaml', 'r') as file:
         config_file = yaml.safe_load(file)
-    main_loop(config_file, logger=logging.getLogger('Talk2Eve'))
+    main_loop(config_file, logger=logging.getLogger('Talk2Eve-AI'))
