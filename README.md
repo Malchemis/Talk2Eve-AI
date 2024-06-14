@@ -1,5 +1,5 @@
 # Talk2Eve - The AI part of our pipeline
-Talk2Eve is a Python based chatbot that revolves around using the [MITRE ATT&CK](https://attack.mitre.org/) knowledge base.
+Talk2Eve-AI is a Python based chatbot that revolves around using the [MITRE ATT&CK](https://attack.mitre.org/) knowledge base.
 
 ## Installation
 1. Clone the repository
@@ -24,5 +24,3 @@ Note : To make this work, you will need to take a look at the other Talk2Eve pro
 ## Misc
 You can modify the level of the logging to see the debugging or error messages, if any.
 Don't hesitate to use your own. 
-
-The archive folder was kept for reference, and contains some of the research done on the models and the knowledge base. It is not complete, and may have errors.
