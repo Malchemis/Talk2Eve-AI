@@ -19,7 +19,10 @@ This is used for personalization of the chatbot.
 2. You may have to take a look at the `db_handler` and `rabbitq_handler` depending on you MongoDB and RabbitMQ configuration.
 3. Run the `main.py` file. 
 
-Note : You can modify the level of the logging to see the debugging or error messages, if any.
+Note : To make this work, you will need to take a look at the other Talk2Eve project parts.
+
+## Misc
+You can modify the level of the logging to see the debugging or error messages, if any.
 Don't hesitate to use your own. 
 
-The archive folder was kept for reference, and contains some of the research done on the models and the knowledge base. 
+The archive folder was kept for reference, and contains some of the research done on the models and the knowledge base. It is not complete, and may have errors.
